@@ -9,7 +9,7 @@ class MyWidget(QtWidgets.QWidget):
         super().__init__()
         self.setMinimumSize(800, 600)
         self.input_field = CodeEditingField()
-        self.input_field.setTextColor(QtGui.QColor(255, 0, 0))
+        # self.input_field.setTextColor(QtGui.QColor(255, 0, 0))
         self.input_field_layout = CodeEditingLayout()
         # self.input_field.change_size(683, 520.96)
         self.input_field.change_size(400, 444, False)
@@ -18,7 +18,7 @@ class MyWidget(QtWidgets.QWidget):
         self.layout = QtWidgets.QVBoxLayout(self)
         self.layout.addLayout(self.input_field_layout)
 
-    def resizeEvent(self, event):   
+    def resizeEvent(self, event):
         self.input_field_layout.set_attributes(0.25 * self.size().width(), 0.16 * self.size().height())
         self.input_field.change_size(0.5 * self.size().width(), 0.74 * self.size().height())
 
