@@ -6,11 +6,18 @@ import re
 
 class CodeEditingField(QtWidgets.QTextEdit):
     COLOR_FORMAT = ["<span style=\"color:", "", ";\">", "", "</span>"]
-    WORD_REGEX = r"\b[^\d\W\?]+\b"
+    WORD_REGEX = re.compile(
+        r"\b[^\d\W]+\b"
+    )
     PYTHON_BUILTINS_FUNCTIONS_COLOR = deepcopy(COLOR_FORMAT)
     PYTHON_BUILTINS_FUNCTIONS_COLOR[1] = "#bb9917"
     NORMAL_TEXT = deepcopy(COLOR_FORMAT)
     NORMAL_TEXT[1] = "#000000"
+    PYTHON_BUILTINS_ERRORS_COLOR = deepcopy(COLOR_FORMAT)
+    PYTHON_BUILTINS_ERRORS_COLOR[1] = "#c75450"
+    PYTHON_BUILTINS_OTHERS_COLOR = deepcopy(COLOR_FORMAT)
+    PYTHON_BUILTINS_OTHERS_COLOR[1] = "#6897bb"
+
     BLACK = QtGui.QColor(0, 0, 0)
 
     def __init__(self):
@@ -32,48 +39,29 @@ class CodeEditingField(QtWidgets.QTextEdit):
         self.just_changed = False
 
     def current_text(self) -> None:
-        if not self.just_changed:
-            text = self.toPlainText()
-            if len(text) > len(self.whole_cache):
-                new_text = text.replace("\n", " ")
-                res = new_text.split(" ")
-                if self.recursion != 0:
-                    self.just_changed = True
-                    self.recursion = 0
-                else:
-                    print(res, self.cached_text)
-                    edited_text = list(set(res) - set(self.cached_text))
-                    edited_text = list(filter(lambda word: word != "", edited_text))
-                    position_hint = self.textCursor().position()
-                    if len(edited_text) > 0:
-                        last_word = edited_text[0]
-                        if last_word in dir(builtins):
-                            actual_pos = self.__riv(last_word, position_hint, text)
-                            print("not a whole word", last_word)
-                            self.just_changed = True
-                            self.recursion = 1
-                            if last_word in self.python_builtins_functions:
-
-                                new_last_word = deepcopy(self.PYTHON_BUILTINS_FUNCTIONS_COLOR)
-                                new_last_word[3] = last_word
-                                new_last_word = ''.join(new_last_word)
-                                self.__replace_word(actual_pos, last_word, new_last_word)
-                    else:
-                        last_word = self.cached_text[-1]
-                        actual_pos = position_hint - len(last_word) - 1
-                        print("a whole word", last_word)
-                        self.just_changed = True
-                        self.recursion = 1
-                        new_last_word = deepcopy(self.NORMAL_TEXT)
-                        new_last_word[3] = last_word
-                        new_last_word = ''.join(new_last_word)
-                        print(new_last_word)
-                        self.__replace_word(actual_pos, last_word, new_last_word)
-            
-                self.cached_text = res
-            self.whole_cache = text
-        else:
+        if self.just_changed:
             self.just_changed = False
+        else:
+            if self.recursion != 0:
+                self.recursion = 0
+                self.just_changed = True
+            else:
+                position = 0
+                text = self.toPlainText()
+                res = self.WORD_REGEX.search(text[position:])
+                while res:
+                    word = res.group()
+                    self.recursion = 1
+                    correct_word = self.__check(word)
+                    position += res.start()
+                    if correct_word:
+                        self.__replace_word(position, word, correct_word)
+                        position += len(word)
+                    else:
+                        position += len(word)
+                    text = self.toPlainText()
+                    res = self.WORD_REGEX.search(text[position:])
+        
 
     def change_size(self, mw: int, mh: int, max_: bool = True) -> None:
         if max_:
@@ -84,6 +72,7 @@ class CodeEditingField(QtWidgets.QTextEdit):
         return None
 
     def __replace_word(self, start, word, new_word):
+        print(new_word)
         cursor = QtGui.QTextCursor(self.document())
         cursor.setPosition(start)
         cursor.movePosition(
@@ -106,3 +95,18 @@ class CodeEditingField(QtWidgets.QTextEdit):
                 position_hint = position_hint - inc_x
                 break
         return position_hint
+
+
+    def __check(self, word) -> str:
+        format_ = None
+        if word in dir(builtins):
+            if word in self.python_builtins_functions:
+                format_ =  deepcopy(self.PYTHON_BUILTINS_FUNCTIONS_COLOR)
+            elif word in self.python_builtins_errors:
+                format_ = deepcopy(self.PYTHON_BUILTINS_ERRORS_COLOR)
+            elif word in self.python_builtins_others:
+                format_ = deepcopy(self.PYTHON_BUILTINS_OTHERS_COLOR)
+        else:
+            format_ = deepcopy(self.NORMAL_TEXT)
+        format_[3] = word
+        return ''.join(format_)
