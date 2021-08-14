@@ -61,7 +61,6 @@ class CodeEditingField(QtWidgets.QTextEdit):
                         position += len(word)
                     text = self.toPlainText()
                     res = self.WORD_REGEX.search(text[position:])
-        
 
     def change_size(self, mw: int, mh: int, max_: bool = True) -> None:
         if max_:
@@ -72,7 +71,6 @@ class CodeEditingField(QtWidgets.QTextEdit):
         return None
 
     def __replace_word(self, start, word, new_word):
-        print(new_word)
         cursor = QtGui.QTextCursor(self.document())
         cursor.setPosition(start)
         cursor.movePosition(
@@ -84,24 +82,11 @@ class CodeEditingField(QtWidgets.QTextEdit):
         cursor.insertHtml(new_word)
         self.just_changed = True
 
-    @staticmethod
-    def __riv(last_word, position_hint, text):
-        for inc_x in range(0, len(last_word) + 1):
-
-            if last_word == text[position_hint + inc_x: position_hint + len(last_word) + inc_x]:
-                position_hint = position_hint + inc_x
-                break
-            elif last_word == text[position_hint - inc_x: position_hint + len(last_word) - inc_x]:
-                position_hint = position_hint - inc_x
-                break
-        return position_hint
-
-
     def __check(self, word) -> str:
         format_ = None
         if word in dir(builtins):
             if word in self.python_builtins_functions:
-                format_ =  deepcopy(self.PYTHON_BUILTINS_FUNCTIONS_COLOR)
+                format_ = deepcopy(self.PYTHON_BUILTINS_FUNCTIONS_COLOR)
             elif word in self.python_builtins_errors:
                 format_ = deepcopy(self.PYTHON_BUILTINS_ERRORS_COLOR)
             elif word in self.python_builtins_others:
