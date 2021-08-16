@@ -11,7 +11,7 @@ class CodeEditingField(QtWidgets.QTextEdit):
         r'''"[^"]*"|'[^']*'|\b([^\d\W]+)\b'''
     )
     NUMBER_REGEX = re.compile(
-        r"\b[\d]+\b"
+        r"""[^"]*"|'[^']*'|\b[\d]+\b"""
     )
 
     # (?<![\S"])([^"\s]+)(?![\S"])|(?<![\S'])([^'\s]+)(?![\S'])
@@ -42,6 +42,9 @@ class CodeEditingField(QtWidgets.QTextEdit):
                                                                      builtin.lower() == builtin, all_builtins))
         self.python_builtins_others = list(filter(lambda builtin: 'Error' not in builtin and
                                                                   builtin.lower() != builtin, all_builtins))
+        self.python_builtins_others += ['lambda', 'not', 'in', 'and', 'is', 'try', 'except', 'while', 'for', 'if',
+                                        'elif', 'else', 'def', 'import', 'from', 'as', 'class']
+        print(self.python_builtins_others)
         self.python_builtins_errors = list(filter(lambda builtin: 'Error' in builtin, all_builtins))
 
         # self.PYTHON_BUILTINS_FUNCTIONS_COLOR = deepcopy(self.COLOR_FORMAT)
@@ -80,10 +83,10 @@ class CodeEditingField(QtWidgets.QTextEdit):
             if word not in self.string and self.__condition(word, n_factor):
                 cursor = QtGui.QTextCursor(self.document())
                 cursor.setPosition(start)
-                if word[0] == "\"" and word[-1] == "\"" and len(word)> n_factor:
+                if word[0] == "\"" and word[-1] == "\"" and len(word) > n_factor:
                     length = len(word) - n_factor
                     worker = True
-                elif word[0] == "\'" and word[-1] == "\'" and len(word)> n_factor:
+                elif word[0] == "\'" and word[-1] == "\'" and len(word) > n_factor:
                     length = len(word) - n_factor
                     worker = True
                 else:
@@ -104,16 +107,15 @@ class CodeEditingField(QtWidgets.QTextEdit):
                 self.time = te.perf_counter()
                 cursor.insertHtml(new_word)
                 if worker:
-                    cursor.setPosition(cursor.position()-1)
+                    cursor.setPosition(cursor.position() - 1)
                     self.setTextCursor(cursor)
         else:
             self.time = te.perf_counter()
-            
-
 
     def __check(self, word) -> str:
         format_ = None
-        if word in dir(builtins):
+        if word in dir(builtins) or word in self.python_builtins_others:
+            print(word)
             if word in self.python_builtins_functions:
                 format_ = deepcopy(self.PYTHON_BUILTINS_FUNCTIONS_COLOR)
             elif word in self.python_builtins_errors:
@@ -136,7 +138,7 @@ class CodeEditingField(QtWidgets.QTextEdit):
         self.recursion = 1
         correct_word = self.__check(word)
         position += res.start()
-        if n_factor == 1: 
+        if n_factor == 1:
             if word[0] == "\"" and word[-1] == "\"":
                 if correct_word:
                     self.__replace_word(position, word, correct_word, n_factor)
@@ -144,7 +146,7 @@ class CodeEditingField(QtWidgets.QTextEdit):
                 else:
                     position += len(word)
                 text = self.toPlainText()
-                return position, self.WORD_REGEX.search(text[position:])  
+                return position, self.WORD_REGEX.search(text[position:])
             elif word[0] == "\'" and word[-1] == "\'":
                 if correct_word:
                     self.__replace_word(position, word, correct_word, n_factor)
