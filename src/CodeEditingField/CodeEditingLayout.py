@@ -76,8 +76,8 @@ class CodeHighlightingField(QtGui.QSyntaxHighlighter):
         string_expression = QtCore.QRegularExpression(r"\'[^\".]*?\'|\"[^\'.]*?\"")
         decimal_expression = QtCore.QRegularExpression(r'''\b[\d]+\b''')
         function_expression = QtCore.QRegularExpression(self.python_builtins_functions_regex)
-        error_expression = QtCore.QRegularExpression(self.python_builtins_errors_regex)
         other_expression = QtCore.QRegularExpression(self.python_builtins_others_regex)
+        error_expression = QtCore.QRegularExpression(self.python_builtins_errors_regex)
 
         # --------------------------------------------
         functions = function_expression.globalMatch(text)
@@ -89,7 +89,7 @@ class CodeHighlightingField(QtGui.QSyntaxHighlighter):
             self.__auto_regex_detection(errors, self.error_formatting)
         # --------------------------------------------
         others = other_expression.globalMatch(text)
-        while errors.hasNext():
+        while others.hasNext():
             self.__auto_regex_detection(others, self.other_formatting)
         # --------------------------------------------
         decimals = decimal_expression.globalMatch(text)
