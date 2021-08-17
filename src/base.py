@@ -1,7 +1,7 @@
 import sys
 from PySide6 import QtCore, QtWidgets, QtGui
 from CodeEditingField.CodeEditingField import CodeEditingField
-from CodeEditingField.CodeEditingLayout import CodeEditingLayout
+from CodeEditingField.CodeEditingLayout import CodeEditingLayout, CodeHighlightingField
 
 
 class MyWidget(QtWidgets.QWidget):
@@ -9,6 +9,9 @@ class MyWidget(QtWidgets.QWidget):
         super().__init__()
         self.setMinimumSize(800, 600)
         self.input_field = CodeEditingField()
+        self.input_field.setTabStopDistance(10 + 10/3)
+        self.input_field.change_line_wrap()
+        self.input_field_highlighter = CodeHighlightingField(self.input_field)
         # self.input_field.setTextColor(QtGui.QColor(255, 0, 0))
         self.input_field_layout = CodeEditingLayout()
         # self.input_field.change_size(683, 520.96)
