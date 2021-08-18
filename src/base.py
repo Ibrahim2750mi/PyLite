@@ -11,6 +11,7 @@ class MyWidget(QtWidgets.QWidget):
         self.setMinimumSize(800, 600)
         self.task_bar_layout = TaskBarLayout()
         self.task_bar_line_label = TaskBarContent()
+        # self.task_bar_line_label.setStyleSheet("border: 1px solid black;")
         self.task_bar_line_label.set_background_color(137, 167, 178)
         self.task_bar_layout.add(self.task_bar_line_label)
         self.input_field = CodeEditingField(self.task_bar_line_label)
