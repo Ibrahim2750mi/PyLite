@@ -62,11 +62,11 @@ class UtilityButtons(QtWidgets.QPushButton):
 
     def error_function(self, text):
         try:
-            st = ast.parse(text)
+            ast.parse(text)
         except Exception as e:
             if e.args != ('compile() arg 1 must be a string, bytes or AST object',):
-                print(dir(e.with_traceback))
-                self.docker.setPlainText(f"Errors:\n{e}")
+                self.docker.setPlainText(f"Errors:\n{e.args[0]} at line number:{e.args[1][1]}"
+                                         f" column number:{e.args[1][2]}")
 
     def documentation_function(self):
         pass

@@ -20,7 +20,7 @@ class MyWidget(QtWidgets.QWidget):
 
         self.side_bar_layout_docker = UtilityBarLayout()
         self.side_bar_docker = UtilityDocker()
-        self.side_bar_docker.change_line_wrap()
+        # self.side_bar_docker.change_line_wrap()
         self.side_bar_docker.setReadOnly(True)
         self.side_bar_layout_docker.add(self.side_bar_docker)
 
