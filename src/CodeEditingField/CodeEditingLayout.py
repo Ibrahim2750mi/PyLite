@@ -22,6 +22,8 @@ class CodeEditingLayout(QtWidgets.QHBoxLayout):
         self.addWidget(widget)
         return None
 
+    
+
 
 class CodeHighlightingField(QtGui.QSyntaxHighlighter):
 
