@@ -1,2 +1,2 @@
 # PyLite
- A beginner based IDE
+ A cool IDE
