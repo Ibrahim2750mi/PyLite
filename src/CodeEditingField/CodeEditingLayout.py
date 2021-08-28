@@ -73,7 +73,9 @@ class CodeHighlightingField(QtGui.QSyntaxHighlighter):
         self.setFormat(match.capturedStart(), match.capturedLength(), x_formatter)
 
     def highlightBlock(self, text: str) -> None:
-        string_expression = QtCore.QRegularExpression(r"\'[^\".]*?\'|\"[^\'.]*?\"")
+
+
+        string_expression = QtCore.QRegularExpression(r"(?<=\')[^\".]*?(?=\')|(?<=\")[^\'.]*?(?=\")")
         decimal_expression = QtCore.QRegularExpression(r'''\b[\d]+\b''')
         function_expression = QtCore.QRegularExpression(self.python_builtins_functions_regex)
         other_expression = QtCore.QRegularExpression(self.python_builtins_others_regex)

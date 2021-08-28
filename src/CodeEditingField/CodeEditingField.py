@@ -1,39 +1,43 @@
 from PySide6 import QtWidgets, QtCore
-import ast
+
+import os
+import sys
+
+sys.path.append(os.path.realpath('.'))
+
+from TaskBar.TaskBarLayout import TaskBarContent
+from UtilityBar.UtilityBarLayout import UtilityButtons
 
 
 class CodeEditingField(QtWidgets.QPlainTextEdit):
-    def __init__(self, line_labeler: QtWidgets.QLabel):
+    def __init__(self, line_labeler: TaskBarContent, variable_button: UtilityButtons, error_button: UtilityButtons):
         super().__init__()
         self.textChanged.connect(self.on_text_change)
-        self.variables = []
+        self.cursorPositionChanged.connect(self.on_cursor_change)
         self.label_line = line_labeler
+        self.variable_button = variable_button
+        self.error_button = error_button
+        self.previous_text = ""
 
     @QtCore.Slot()
     def on_text_change(self):
-        try:
-            st = ast.parse(self.toPlainText())
-        except Exception as e:
-            print(e)
-        else:
-            self.variables = []
-            for node in ast.walk(st):
-                if type(node) is ast.Name:
-                    self.variables.append(node.id)
-        lines = self.toPlainText().replace('\t', '    ').split('\n')
-        counts_for_tabs = self.toPlainText().count('\t')
-        column_number = 0
-        line_number = 0
-        cursor_pos = self.textCursor().position() + 4*counts_for_tabs
+        if len(self.previous_text) < len(self.toPlainText()):
+            if self.toPlainText()[-1] == '(':
+                pair = ')'
+                self.insertPlainText(pair)
+                new_text_cursor = self.textCursor()
+                new_text_cursor.setPosition(new_text_cursor.position() - 1)
+                self.setTextCursor(new_text_cursor)
 
-        for line in lines:
-            if cursor_pos - len(line) >= 0:
-                line_number += 1
-            if line_number == 1:
-                column_number = cursor_pos - len(' '.join(lines[0:line_number-1]))
-            else:
-                column_number = cursor_pos - len(' '.join(lines[0:line_number - 1])) - 1
-        self.label_line.setText(f"line number:{line_number}, column number:{column_number}")
+        self.previous_text = self.toPlainText()
+
+        self.variable_button.variable_function(self.toPlainText())
+        self.error_button.error_function(self.toPlainText())
+
+    @QtCore.Slot()
+    def on_cursor_change(self):
+        self.label_line.line_and_column_number(self.textCursor())
+
 
     def change_size(self, mw: int, mh: int, max_: bool = True) -> None:
         if max_:
@@ -45,3 +49,4 @@ class CodeEditingField(QtWidgets.QPlainTextEdit):
 
     def change_line_wrap(self) -> None:
         self.setLineWrapMode(QtWidgets.QPlainTextEdit.NoWrap)
+
