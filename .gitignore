@@ -12,4 +12,6 @@ src/CodeEditingField/__pycache__/CodeEditingField.cpython-37.pyc
 src/CodeEditingField/__pycache__/CodeEditingLayout.cpython-37.pyc
 src/TaskBar/__pycache__/__init__.cpython-37.pyc
 src/TaskBar/__pycache__/TaskBarLayout.cpython-37.pyc
-
+*.xml
+*.iml
+*.pyc

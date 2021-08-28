@@ -16,6 +16,7 @@ class CodeFieldWidget(QtWidgets.QWidget):
                  , error_button: UtilityButtons):
         super(CodeFieldWidget, self).__init__()
         self.code_editing_field = CodeEditingField.CodeEditingField(line_labeler, variable_button, error_button)
+        self.code_editing_field.change_line_wrap()
         self.syntax_highlighter = CodeEditingLayout.CodeHighlightingField(self.code_editing_field)
         self.layout = CodeEditingLayout.CodeEditingLayout()
         self.layout.add(self.code_editing_field)
