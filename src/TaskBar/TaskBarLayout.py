@@ -1,10 +1,12 @@
 from PySide6 import QtWidgets, QtCore, QtGui
 
 
+
 class TaskBarLayout(QtWidgets.QVBoxLayout):
     def __init__(self):
         super(TaskBarLayout, self).__init__()
         self.setAlignment(QtCore.Qt.AlignBottom)
+
 
     def set_attributes(self, x: int, y: int, dx: int = 0, dy: int = 0) -> None:
         self.setContentsMargins(x, y, dx, dy)
@@ -37,11 +39,12 @@ class TaskBarContent(QtWidgets.QLabel):
         color_palette.setColor(QtGui.QPalette.WindowText, color)
         self.setPalette(color_palette)
 
+
     def line_and_column_number(self, cursor: QtGui.QTextCursor):
         column_number = cursor.columnNumber()
         line_number = cursor.blockNumber()
         self.setText(f"line number:{line_number+1}, column number:{column_number+1}")
 
-    # def set_co_ordinate(self, x: int, y: int):
-    #     self.setStyleSheet(f'padding-left: {x}px; padding-top: {y}px;')
+
+
 

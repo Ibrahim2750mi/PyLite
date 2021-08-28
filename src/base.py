@@ -1,4 +1,5 @@
 import sys
+
 from PySide6 import QtWidgets, QtCore
 from CodeEditingField.CodeEditingField import CodeEditingField
 from TaskBar.TaskBarLayout import TaskBarLayout, TaskBarContent
@@ -10,7 +11,6 @@ class MyWidget(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
         self.setMinimumSize(800, 600)
-
         self.task_bar_layout = TaskBarLayout()
         self.task_bar_line_label = TaskBarContent()
         self.task_bar_line_label.setWordWrap(True)
