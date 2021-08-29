@@ -37,7 +37,6 @@ class CodeEditingField(QtWidgets.QPlainTextEdit):
     @QtCore.Slot()
     def on_cursor_change(self):
         self.label_line.line_and_column_number(self.textCursor())
-        print('run')
 
     def change_size(self, mw: int, mh: int, max_: bool = True) -> None:
         if max_:

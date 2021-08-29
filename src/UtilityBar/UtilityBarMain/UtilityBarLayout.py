@@ -33,9 +33,9 @@ class UtilityDocker(QtWidgets.QPlainTextEdit):
 
 # noinspection PyBroadException
 class UtilityButtons(QtWidgets.QPushButton):
-    def __init__(self, num: int, docker: UtilityDocker):
+    def __init__(self, num: int, docker: UtilityDocker, text: str = ""):
         # Accepting UtilityDocker as argument to change the text within it.
-        super(UtilityButtons, self).__init__()
+        super(UtilityButtons, self).__init__(text=text)
         self.docker = docker
         if num == 1:
             self.clicked.connect(self.variable_function)
