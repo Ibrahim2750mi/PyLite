@@ -12,8 +12,8 @@ from UtilityBar.UtilityBarLayout import UtilityButtons
 
 
 class CodeFieldWidget(QtWidgets.QWidget):
-    def __init__(self, line_labeler: TaskBarContent, variable_button: UtilityButtons
-                 , error_button: UtilityButtons):
+    def __init__(self, line_labeler: TaskBarContent, variable_button: UtilityButtons,
+                 error_button: UtilityButtons):
         super(CodeFieldWidget, self).__init__()
         self.code_editing_field = CodeEditingField.CodeEditingField(line_labeler, variable_button, error_button)
         self.code_editing_field.change_line_wrap()

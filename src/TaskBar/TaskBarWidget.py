@@ -1,6 +1,6 @@
 from TaskBarMain.TaskBarLayout import TaskBarLayout, TaskBarContent
 
-from PySide6 import QtWidgets
+from PySide6 import QtWidgets, QtGui
 
 
 class TaskBarWidget(QtWidgets.QWidget):
@@ -15,5 +15,5 @@ class TaskBarWidget(QtWidgets.QWidget):
     def get_main(self) -> TaskBarContent:
         return self.task_bar_line_label
 
-    def resizeEvent(self, event: PySide6.QtGui.QResizeEvent) -> None:
+    def resizeEvent(self, event: QtGui.QResizeEvent) -> None:
         self.task_bar_line_label.setFixedSize(0.5 * self.size().width(), 25)
