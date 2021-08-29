@@ -24,7 +24,7 @@ class Main(QtWidgets.QMainWindow):
 
         # setting up docker
         self.right_docker = QtWidgets.QDockWidget()
-        self.right_docker.setWidget(self.right_docker_c)
+        self.right_docker.setWidget(self.right_docker_c.get_docker())
         self.addDockWidget(QtCore.Qt.RightDockWidgetArea, self.right_docker)
 
         # setting up toolbar

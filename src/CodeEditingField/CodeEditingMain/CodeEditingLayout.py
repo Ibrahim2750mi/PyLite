@@ -1,5 +1,7 @@
-from PySide6 import QtWidgets, QtCore, QtGui
 import builtins
+import pickle
+
+from PySide6 import QtWidgets, QtCore, QtGui
 
 
 def regex_converter(word_list: list) -> str:
@@ -26,20 +28,23 @@ class CodeHighlightingField(QtGui.QSyntaxHighlighter):
         self.python_builtins_functions_regex = regex_converter(python_builtins_functions)
         self.python_builtins_others_regex = regex_converter(python_builtins_others)
 
+        with open("../assets/assets.pickle", "rb") as f:
+            colors = pickle.load(f)
+
         self.string_formatting = QtGui.QTextCharFormat()
-        self.string_formatting.setForeground(self.__format_color("62b543"))
+        self.string_formatting.setForeground(self.__format_color(colors["string_formatting"]))
         # --------------------------------------------
         self.function_formatting = QtGui.QTextCharFormat()
-        self.function_formatting.setForeground(self.__format_color("bb9917"))
+        self.function_formatting.setForeground(self.__format_color(colors["function_formatting"]))
         # --------------------------------------------
         self.error_formatting = QtGui.QTextCharFormat()
-        self.error_formatting.setForeground(self.__format_color("c75450"))
+        self.error_formatting.setForeground(self.__format_color(colors["error_formatting"]))
         # --------------------------------------------
         self.other_formatting = QtGui.QTextCharFormat()
-        self.other_formatting.setForeground(self.__format_color('6897bb'))
+        self.other_formatting.setForeground(self.__format_color(colors["other_formatting"]))
         # --------------------------------------------
         self.decimal_formatting = QtGui.QTextCharFormat()
-        self.decimal_formatting.setForeground(self.__format_color('40b6e0'))
+        self.decimal_formatting.setForeground(self.__format_color(colors["decimal_formatting"]))
 
     @staticmethod
     def __format_color(hex_string: str) -> QtGui.QBrush:
@@ -86,3 +91,7 @@ class CodeHighlightingField(QtGui.QSyntaxHighlighter):
         strings = string_expression.globalMatch(text)
         while strings.hasNext():
             self.__auto_regex_detection(strings, self.string_formatting)
+
+    def set_color(self, color: str, attr_name: str) -> None:
+        variable = eval(f"self.{attr_name}")
+        variable.setForeground(self.__format_color(f"{color}"))
