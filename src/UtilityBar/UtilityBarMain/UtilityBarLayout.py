@@ -1,9 +1,11 @@
-from PySide6 import QtWidgets, QtCore
 import ast
 import builtins
+from typing import Union
+
+from PySide6 import QtWidgets, QtCore
 
 
-class UtilityBarLayout(QtWidgets.QHBoxLayout):
+class UtilityBarLayout(QtWidgets.QVBoxLayout):
     def __init__(self):
         super(UtilityBarLayout, self).__init__()
         self.setAlignment(QtCore.Qt.AlignTop)
@@ -12,7 +14,7 @@ class UtilityBarLayout(QtWidgets.QHBoxLayout):
         self.setContentsMargins(x, y, dx, dy)
         return None
 
-    def add(self, widget: QtWidgets.QLabel) -> None:
+    def add(self, widget: Union[QtWidgets.QLabel, QtWidgets.QPlainTextEdit]) -> None:
         self.addWidget(widget)
         return None
 
@@ -28,13 +30,11 @@ class UtilityDocker(QtWidgets.QPlainTextEdit):
     def change_line_wrap(self) -> None:
         self.setLineWrapMode(QtWidgets.QPlainTextEdit.NoWrap)
 
-    # def set_co_ordinate(self, x: int, y: int):
-    #     self.setStyleSheet(f'padding-left: {x}px; padding-top: {y}px;')
-
 
 # noinspection PyBroadException
 class UtilityButtons(QtWidgets.QPushButton):
     def __init__(self, num: int, docker: UtilityDocker):
+        # Accepting UtilityDocker as argument to change the text within it.
         super(UtilityButtons, self).__init__()
         self.docker = docker
         if num == 1:

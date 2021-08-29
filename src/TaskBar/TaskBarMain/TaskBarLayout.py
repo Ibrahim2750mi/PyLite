@@ -16,28 +16,16 @@ class TaskBarLayout(QtWidgets.QVBoxLayout):
 
 
 class TaskBarContent(QtWidgets.QLabel):
-    def __init__(self):
+    def __init__(self, window: QtWidgets.QMainWindow):
         super(TaskBarContent, self).__init__()
         self.setAutoFillBackground(True)
-
-    @staticmethod
-    def __auto_color_maker(r, g, b):
-        color = QtGui.QColor(r, g, b)
-        return color
+        self.window = window
 
     def set_background_color(self, r, g, b):
-        color = self.__auto_color_maker(r, g, b)
-        color_palette = QtGui.QPalette()
-        color_palette.setColor(QtGui.QPalette.Window, color)
-        self.setPalette(color_palette)
-
-    def set_foreground_color(self, r, g, b):
-        color = self.__auto_color_maker(r, g, b)
-        color_palette = QtGui.QPalette()
-        color_palette.setColor(QtGui.QPalette.WindowText, color)
-        self.setPalette(color_palette)
+        self.window.statusBar().setStyleSheet(f"background: rgb({r}, {g}, {b})")
 
     def line_and_column_number(self, cursor: QtGui.QTextCursor):
         column_number = cursor.columnNumber()
         line_number = cursor.blockNumber()
-        self.setText(f"line number:{line_number+1}, column number:{column_number+1}")
+        self.set_background_color(137, 167, 178)
+        self.window.statusBar().showMessage(f"line number:{line_number+1}, column number:{column_number+1}")

@@ -5,8 +5,8 @@ import sys
 
 sys.path.append(os.path.realpath('.'))
 
-from TaskBar.TaskBarLayout import TaskBarContent
-from UtilityBar.UtilityBarLayout import UtilityButtons
+from TaskBar.TaskBarMain.TaskBarLayout import TaskBarContent
+from UtilityBar.UtilityBarMain.UtilityBarLayout import UtilityButtons
 
 
 class CodeEditingField(QtWidgets.QPlainTextEdit):
@@ -37,6 +37,7 @@ class CodeEditingField(QtWidgets.QPlainTextEdit):
     @QtCore.Slot()
     def on_cursor_change(self):
         self.label_line.line_and_column_number(self.textCursor())
+        print('run')
 
     def change_size(self, mw: int, mh: int, max_: bool = True) -> None:
         if max_:
@@ -48,4 +49,3 @@ class CodeEditingField(QtWidgets.QPlainTextEdit):
 
     def change_line_wrap(self) -> None:
         self.setLineWrapMode(QtWidgets.QPlainTextEdit.NoWrap)
-

@@ -1,16 +1,14 @@
-from TaskBarMain.TaskBarLayout import TaskBarLayout, TaskBarContent
+from .TaskBarMain.TaskBarLayout import TaskBarLayout, TaskBarContent
 
 from PySide6 import QtWidgets, QtGui
 
 
 class TaskBarWidget(QtWidgets.QWidget):
-    def __init__(self):
+    def __init__(self, window: QtWidgets.QMainWindow):
         super(TaskBarWidget, self).__init__()
-        self.task_bar_layout = TaskBarLayout()
-        self.task_bar_line_label = TaskBarContent()
+        self.task_bar_line_label = TaskBarContent(window)
         self.task_bar_line_label.setWordWrap(True)
         self.task_bar_line_label.set_background_color(137, 167, 178)
-        self.task_bar_layout.add(self.task_bar_line_label)
     
     def get_main(self) -> TaskBarContent:
         return self.task_bar_line_label
