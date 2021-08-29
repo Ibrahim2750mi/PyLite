@@ -9,20 +9,6 @@ def regex_converter(word_list: list) -> str:
     return r''.join(word_list)
 
 
-class CodeEditingLayout(QtWidgets.QHBoxLayout):
-    def __init__(self):
-        super().__init__()
-        self.setAlignment(QtCore.Qt.AlignTop)
-
-    def set_attributes(self, x: int, y: int) -> None:
-        self.setContentsMargins(x, y, 0, 0)
-        return None
-
-    def add(self, widget: QtWidgets.QPlainTextEdit) -> None:
-        self.addWidget(widget)
-        return None
-
-
 class CodeHighlightingField(QtGui.QSyntaxHighlighter):
 
     def __init__(self, editor: QtWidgets.QPlainTextEdit):

@@ -1,4 +1,4 @@
-from .UtilityBarMain.UtilityBarLayout import UtilityButtons, UtilityBarLayout, UtilityDocker
+from .UtilityBarMain.UtilityBarLayout import UtilityButtons, UtilityDocker
 
 from PySide6 import QtWidgets
 

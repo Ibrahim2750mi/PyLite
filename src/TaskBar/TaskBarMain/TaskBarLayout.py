@@ -1,18 +1,4 @@
-from PySide6 import QtWidgets, QtCore, QtGui
-
-
-class TaskBarLayout(QtWidgets.QVBoxLayout):
-    def __init__(self):
-        super(TaskBarLayout, self).__init__()
-        self.setAlignment(QtCore.Qt.AlignBottom)
-
-    def set_attributes(self, x: int, y: int, dx: int = 0, dy: int = 0) -> None:
-        self.setContentsMargins(x, y, dx, dy)
-        return None
-
-    def add(self, widget: QtWidgets.QLabel) -> None:
-        self.addWidget(widget)
-        return None
+from PySide6 import QtWidgets, QtGui
 
 
 class TaskBarContent(QtWidgets.QLabel):

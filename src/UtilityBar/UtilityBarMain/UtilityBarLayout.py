@@ -1,22 +1,7 @@
 import ast
 import builtins
-from typing import Union
 
-from PySide6 import QtWidgets, QtCore
-
-
-class UtilityBarLayout(QtWidgets.QVBoxLayout):
-    def __init__(self):
-        super(UtilityBarLayout, self).__init__()
-        self.setAlignment(QtCore.Qt.AlignTop)
-
-    def set_attributes(self, x: int, y: int, dx: int = 0, dy: int = 0) -> None:
-        self.setContentsMargins(x, y, dx, dy)
-        return None
-
-    def add(self, widget: Union[QtWidgets.QLabel, QtWidgets.QPlainTextEdit]) -> None:
-        self.addWidget(widget)
-        return None
+from PySide6 import QtWidgets
 
 
 class UtilityDocker(QtWidgets.QPlainTextEdit):
