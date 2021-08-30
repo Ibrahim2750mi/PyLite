@@ -45,6 +45,9 @@ class CodeHighlightingField(QtGui.QSyntaxHighlighter):
         # --------------------------------------------
         self.decimal_formatting = QtGui.QTextCharFormat()
         self.decimal_formatting.setForeground(self.__format_color(colors["decimal_formatting"]))
+        # --------------------------------------------
+        self.anything_else_formatting = QtGui.QTextCharFormat()
+        self.anything_else_formatting.setForeground(self.__format_color(colors["foreground"]))
 
     @staticmethod
     def __format_color(hex_string: str) -> QtGui.QBrush:
@@ -67,10 +70,15 @@ class CodeHighlightingField(QtGui.QSyntaxHighlighter):
 
         string_expression = QtCore.QRegularExpression(r"(?<=\')[^\".]*?(?=\')|(?<=\")[^\'.]*?(?=\")")
         decimal_expression = QtCore.QRegularExpression(r'''\b[\d]+\b''')
+        anything_else_expression = QtCore.QRegularExpression(r".*?")
         function_expression = QtCore.QRegularExpression(self.python_builtins_functions_regex)
         other_expression = QtCore.QRegularExpression(self.python_builtins_others_regex)
         error_expression = QtCore.QRegularExpression(self.python_builtins_errors_regex)
 
+        # --------------------------------------------
+        anythings_else = anything_else_expression.globalMatch(text)
+        while anythings_else.hasNext():
+            self.__auto_regex_detection(anythings_else, self.anything_else_formatting)
         # --------------------------------------------
         functions = function_expression.globalMatch(text)
         while functions.hasNext():

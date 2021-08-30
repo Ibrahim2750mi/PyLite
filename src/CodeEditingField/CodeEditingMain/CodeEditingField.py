@@ -1,5 +1,6 @@
 from PySide6 import QtWidgets, QtCore
 
+import pickle
 import os
 import sys
 
@@ -17,6 +18,10 @@ class CodeEditingField(QtWidgets.QPlainTextEdit):
         self.label_line = line_labeler
         self.variable_button = variable_button
         self.error_button = error_button
+        with open("../assets/assets.pickle", "rb") as f:
+            colors = pickle.load(f)
+            bg = colors["background"]
+        self.setStyleSheet("QPlainTextEdit {" + f"background-color: #{bg};" + "}")
         self.previous_text = ""
 
     @QtCore.Slot()

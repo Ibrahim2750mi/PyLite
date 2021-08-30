@@ -1,4 +1,5 @@
 from CodeEditingField import CodeEditingFieldWidget
+from Preferences import PreferenceWidget
 from TaskBar import TaskBarWidget
 from UtilityBar import UtilityBarWidget
 
@@ -114,16 +115,9 @@ class Main(QtWidgets.QMainWindow):
         self.removeDockWidget(self.right_docker)
         self.statusBar().hide()
         self.removeToolBar(self.tool_bar)
-
-        new_widget = QtWidgets.QWidget()
-        new_layout = QtWidgets.QGridLayout()
-        new_label = QtWidgets.QLabel()
-        new_label.setText("bg color")
-        new_line_text = QtWidgets.QLineEdit()
-        new_layout.addWidget(new_label, 0, 1)
-        new_layout.addWidget(new_line_text, 1, 1)
-        new_widget.setLayout(new_layout)
-        self.setCentralWidget(new_widget)
+        a = PreferenceWidget.PreferenceWidget()
+        self.setCentralWidget(a)
+        self.centralWidget().show()
 
 
 if __name__ == "__main__":

@@ -15,3 +15,4 @@ src/TaskBar/__pycache__/TaskBarLayout.cpython-37.pyc
 *.xml
 *.iml
 *.pyc
+src/.idea
