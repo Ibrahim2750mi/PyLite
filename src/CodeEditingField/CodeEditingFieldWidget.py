@@ -1,9 +1,9 @@
-from .CodeEditingMain import CodeEditingField, CodeEditingLayout
+import os
+import sys
 
 from PySide6 import QtWidgets, QtGui
 
-import os
-import sys
+from .CodeEditingMain import CodeEditingField, CodeEditingLayout
 
 sys.path.append(os.path.realpath('.'))
 
@@ -16,6 +16,7 @@ class CodeFieldWidget(QtWidgets.QWidget):
                  error_button: UtilityButtons):
         super(CodeFieldWidget, self).__init__()
         self.code_editing_field = CodeEditingField.CodeEditingField(line_labeler, variable_button, error_button)
+        self.code_editing_field.setTabStopDistance(40/3)
         self.code_editing_field.change_line_wrap()
         self.syntax_highlighter = CodeEditingLayout.CodeHighlightingField(self.code_editing_field)
 

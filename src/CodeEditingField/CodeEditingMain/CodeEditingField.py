@@ -1,8 +1,8 @@
-from PySide6 import QtWidgets, QtCore
-
-import pickle
 import os
+import pickle
 import sys
+
+from PySide6 import QtWidgets, QtCore
 
 sys.path.append(os.path.realpath('.'))
 
@@ -18,6 +18,7 @@ class CodeEditingField(QtWidgets.QPlainTextEdit):
         self.label_line = line_labeler
         self.variable_button = variable_button
         self.error_button = error_button
+
         with open("../assets/assets.pickle", "rb") as f:
             colors = pickle.load(f)
             bg = colors["background"]

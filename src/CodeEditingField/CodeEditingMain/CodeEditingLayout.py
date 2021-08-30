@@ -54,6 +54,7 @@ class CodeHighlightingField(QtGui.QSyntaxHighlighter):
         r = hex_string[0:2]
         g = hex_string[2:4]
         b = hex_string[4:6]
+
         r = int(r[0], 16) * 16 + int(r[1], 16)
         g = int(g[0], 16) * 16 + int(g[1], 16)
         b = int(b[0], 16) * 16 + int(b[1], 16)

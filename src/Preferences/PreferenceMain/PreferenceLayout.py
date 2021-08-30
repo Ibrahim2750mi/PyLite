@@ -1,6 +1,8 @@
 import pickle
+from string import hexdigits
 
 from PySide6 import QtWidgets, QtCore
+
 
 # formatting_type: Literal['string_formatting', 'function_formatting',
 #                                                 'error_formatting', 'other_formatting',
@@ -8,19 +10,35 @@ from PySide6 import QtWidgets, QtCore
 
 
 class PreferenceButtons(QtWidgets.QPushButton):
-    def __init__(self, formatting_type: str, color: str):
+    def __init__(self, formatting_type: str, text: QtWidgets.QLineEdit):
         super(PreferenceButtons, self).__init__(text="Confirm")
         self.formatting_type = formatting_type
-        self.color = color
+        self.text = text
         self.clicked.connect(self.on_click)
 
     @QtCore.Slot()
     def on_click(self):
         with open("../assets/assets.pickle", "rb") as f:
             current_styling = pickle.load(f)
-        current_styling[self.formatting_type] = self.color
-        with open("../assets/assets.pickle", "wb") as f:
-            pickle.dump(current_styling, f)
+        if self.__check(self.text.text().lower()):
+            current_styling[self.formatting_type] = self.text.text().lower()
+            with open("../assets/assets.pickle", "wb") as f:
+                pickle.dump(current_styling, f)
+        else:
+            self.dialog_critical("Wrong hex format given")
+
+    @staticmethod
+    def __check(simplified_text: str) -> bool:
+        for letter in simplified_text:
+            if letter not in hexdigits:
+                return False
+        return True
+
+    def dialog_critical(self, s):
+        dlg = QtWidgets.QMessageBox(self)
+        dlg.setText(s)
+        dlg.setIcon(QtWidgets.QMessageBox.Critical)
+        dlg.show()
 
 
 class PreferenceLayout(QtWidgets.QVBoxLayout):
@@ -36,7 +54,7 @@ class PreferenceLayout(QtWidgets.QVBoxLayout):
         self.line_edit = QtWidgets.QLineEdit()
         self.line_edit.setText(self.line_edit_text)
         self.line_edit.setFixedWidth(60)
-        self.button = PreferenceButtons(self.formatting_type, self.line_edit_text)
+        self.button = PreferenceButtons(self.formatting_type, self.line_edit)
         self.addWidget(self.label)
         self.addWidget(self.line_edit)
         self.addWidget(self.button)

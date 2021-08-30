@@ -1,6 +1,6 @@
-from .PreferenceMain.PreferenceLayout import PreferenceLayout
-
 from PySide6 import QtWidgets, QtCore
+
+from .PreferenceMain.PreferenceLayout import PreferenceLayout
 
 
 class PreferenceWidget(QtWidgets.QWidget):
@@ -22,9 +22,15 @@ class PreferenceWidget(QtWidgets.QWidget):
         self.__add_widgets(self.background_layout, 0, 0)
         self.__add_widgets(self.foreground_layout, 0, 100)
         self.__add_widgets(self.function_layout, 0, 200)
+        self.__add_widgets(self.error_layout, 3, 0)
+        self.__add_widgets(self.other_layout, 3, 100)
+        self.__add_widgets(self.decimal_layout, 3, 200)
+        self.__add_widgets(self.string_layout, 6, 0)
+
+        # ------------------------------------------------------------
         self.setLayout(self.main_layout)
 
     def __add_widgets(self, layout: PreferenceLayout, c: int, r: int):
         for i, widget in enumerate(layout.get_objects(), start=1):
-            self.main_layout.addWidget(widget, c+(i*100), r, 10, 10)
+            self.main_layout.addWidget(widget, (c+i)*10, r, 2, 2)
             self.setLayout(self.main_layout)
