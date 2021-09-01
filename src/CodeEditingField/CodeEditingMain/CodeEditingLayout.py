@@ -31,6 +31,8 @@ class CodeHighlightingField(QtGui.QSyntaxHighlighter):
         with open("../assets/assets.pickle", "rb") as f:
             colors = pickle.load(f)
 
+        self.comment_formatting = QtGui.QTextCharFormat()
+        self.comment_formatting.setForeground(self.__format_color("71767b"))
         # --------------------------------------------
         self.string_formatting = QtGui.QTextCharFormat()
         self.string_formatting.setForeground(self.__format_color(colors["string_formatting"]))
@@ -73,6 +75,7 @@ class CodeHighlightingField(QtGui.QSyntaxHighlighter):
         string_expression = QtCore.QRegularExpression(r"(?<=\')[^\".]*?(?=\')|(?<=\")[^\'.]*?(?=\")")
         decimal_expression = QtCore.QRegularExpression(r'''\b[\d]+\b''')
         anything_else_expression = QtCore.QRegularExpression(r".*?")
+        comment_expression = QtCore.QRegularExpression(r"#.*?$")
         function_expression = QtCore.QRegularExpression(self.python_builtins_functions_regex)
         other_expression = QtCore.QRegularExpression(self.python_builtins_others_regex)
         error_expression = QtCore.QRegularExpression(self.python_builtins_errors_regex)
@@ -101,6 +104,10 @@ class CodeHighlightingField(QtGui.QSyntaxHighlighter):
         strings = string_expression.globalMatch(text)
         while strings.hasNext():
             self.__auto_regex_detection(strings, self.string_formatting)
+        # --------------------------------------------
+        comments = comment_expression.globalMatch(text)
+        while comments.hasNext():
+            self.__auto_regex_detection(comments, self.comment_formatting)
 
     def set_color(self, color: str, attr_name: str) -> None:
         variable = eval(f"self.{attr_name}")
