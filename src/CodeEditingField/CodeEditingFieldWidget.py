@@ -8,12 +8,12 @@ from .CodeEditingMain import CodeEditingField, CodeEditingLayout
 sys.path.append(os.path.realpath('.'))
 
 from TaskBar.TaskBarMain.TaskBarLayout import TaskBarContent
-from UtilityBar.UtilityBarMain.UtilityBarLayout import UtilityButtons
+from UtilityBar.UtilityBarMain.UtilityBarLayout import UtilityActions
 
 
 class CodeFieldWidget(QtWidgets.QWidget):
-    def __init__(self, line_labeler: TaskBarContent, variable_button: UtilityButtons,
-                 error_button: UtilityButtons):
+    def __init__(self, line_labeler: TaskBarContent, variable_button: UtilityActions,
+                 error_button: UtilityActions):
         super(CodeFieldWidget, self).__init__()
         self.code_editing_field = CodeEditingField.CodeEditingField(line_labeler, variable_button, error_button)
         self.code_editing_field.setTabStopDistance(40/3)

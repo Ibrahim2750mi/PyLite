@@ -1,6 +1,8 @@
-from PySide6 import QtWidgets, QtCore
-
 from .PreferenceMain.PreferenceLayout import PreferenceLayout
+
+import pickle
+
+from PySide6 import QtWidgets, QtCore
 
 
 class PreferenceWidget(QtWidgets.QWidget):
@@ -29,8 +31,16 @@ class PreferenceWidget(QtWidgets.QWidget):
 
         # ------------------------------------------------------------
         self.setLayout(self.main_layout)
+        self.load_color()
 
     def __add_widgets(self, layout: PreferenceLayout, c: int, r: int):
         for i, widget in enumerate(layout.get_objects(), start=1):
             self.main_layout.addWidget(widget, (c+i)*10, r, 2, 2)
             self.setLayout(self.main_layout)
+
+    def load_color(self):
+        with open("../assets/assets.pickle", "rb") as f:
+            colors = pickle.load(f)
+            bg = colors["background"]
+            fg = colors["foreground"]
+        self.setStyleSheet("QWidget {" + f"color: #{fg}; background-color: #{bg};" + "}")

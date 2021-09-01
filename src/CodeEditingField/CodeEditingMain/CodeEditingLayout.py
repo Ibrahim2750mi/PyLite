@@ -58,9 +58,9 @@ class CodeHighlightingField(QtGui.QSyntaxHighlighter):
         g = hex_string[2:4]
         b = hex_string[4:6]
 
-        r = int(r[0], 16) * 16 + int(r[1], 16)
-        g = int(g[0], 16) * 16 + int(g[1], 16)
-        b = int(b[0], 16) * 16 + int(b[1], 16)
+        r = int(r, 16)
+        g = int(g, 16)
+        b = int(b, 16)
 
         x_color = QtGui.QColor(r, g, b)
         return x_color
@@ -101,13 +101,13 @@ class CodeHighlightingField(QtGui.QSyntaxHighlighter):
         while decimals.hasNext():
             self.__auto_regex_detection(decimals, self.decimal_formatting)
         # --------------------------------------------
-        strings = string_expression.globalMatch(text)
-        while strings.hasNext():
-            self.__auto_regex_detection(strings, self.string_formatting)
-        # --------------------------------------------
         comments = comment_expression.globalMatch(text)
         while comments.hasNext():
             self.__auto_regex_detection(comments, self.comment_formatting)
+        # --------------------------------------------
+        strings = string_expression.globalMatch(text)
+        while strings.hasNext():
+            self.__auto_regex_detection(strings, self.string_formatting)
 
     def set_color(self, color: str, attr_name: str) -> None:
         variable = eval(f"self.{attr_name}")

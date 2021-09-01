@@ -7,22 +7,18 @@ from PySide6 import QtWidgets, QtCore
 sys.path.append(os.path.realpath('.'))
 
 from TaskBar.TaskBarMain.TaskBarLayout import TaskBarContent
-from UtilityBar.UtilityBarMain.UtilityBarLayout import UtilityButtons
+from UtilityBar.UtilityBarMain.UtilityBarLayout import UtilityActions
 
 
 class CodeEditingField(QtWidgets.QPlainTextEdit):
-    def __init__(self, line_labeler: TaskBarContent, variable_button: UtilityButtons, error_button: UtilityButtons):
+    def __init__(self, line_labeler: TaskBarContent, variable_button: UtilityActions, error_button: UtilityActions):
         super().__init__()
         self.textChanged.connect(self.on_text_change)
         self.cursorPositionChanged.connect(self.on_cursor_change)
         self.label_line = line_labeler
         self.variable_button = variable_button
         self.error_button = error_button
-
-        with open("../assets/assets.pickle", "rb") as f:
-            colors = pickle.load(f)
-            bg = colors["background"]
-        self.setStyleSheet("QPlainTextEdit {" + f"background-color: #{bg};" + "}")
+        self.load_color()
         self.previous_text = ""
 
     @QtCore.Slot()
@@ -59,3 +55,9 @@ class CodeEditingField(QtWidgets.QPlainTextEdit):
 
     def change_line_wrap(self) -> None:
         self.setLineWrapMode(QtWidgets.QPlainTextEdit.NoWrap)
+
+    def load_color(self):
+        with open("../assets/assets.pickle", "rb") as f:
+            colors = pickle.load(f)
+            bg = colors["background"]
+        self.setStyleSheet("QPlainTextEdit {" + f"background-color: #{bg};" + "}")

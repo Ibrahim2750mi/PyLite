@@ -1,15 +1,16 @@
 from .UtilityAstAnalyzer import Analyzer
 
 import ast
-import builtins
+import pickle
 
 import autopep8
-from PySide6 import QtWidgets
+from PySide6 import QtWidgets, QtGui
 
 
 class UtilityDocker(QtWidgets.QPlainTextEdit):
     def __init__(self):
         super(UtilityDocker, self).__init__()
+        self.load_color()
 
     def change_size(self, mw: int, mh: int) -> None:
         self.setFixedSize(mw, mh)
@@ -18,22 +19,29 @@ class UtilityDocker(QtWidgets.QPlainTextEdit):
     def change_line_wrap(self) -> None:
         self.setLineWrapMode(QtWidgets.QPlainTextEdit.NoWrap)
 
+    def load_color(self):
+        with open("../assets/assets.pickle", "rb") as f:
+            colors = pickle.load(f)
+            bg = colors["background"]
+            fg = colors["foreground"]
+        self.setStyleSheet("QPlainTextEdit {" + f"color: #{fg};background-color: #{bg};" + "}")
+
 
 # noinspection PyBroadException
-class UtilityButtons(QtWidgets.QPushButton):
+class UtilityActions(QtGui.QAction):
     def __init__(self, num: int, docker: UtilityDocker, text: str = ""):
         # Accepting UtilityDocker as argument to change the text within it.
-        super(UtilityButtons, self).__init__(text=text)
+        super(UtilityActions, self).__init__(text, docker)
         self.docker = docker
         if num == 1:
-            self.clicked.connect(self.variable_function)
+            self.triggered.connect(self.variable_function)
             self.analyzer = Analyzer()
 
         elif num == 2:
-            self.clicked.connect(self.gen_info_function)
+            self.triggered.connect(self.gen_info_function)
 
         elif num == 3:
-            self.clicked.connect(self.documentation_function)
+            self.triggered.connect(self.documentation_function)
 
     def variable_function(self, text):
         try:

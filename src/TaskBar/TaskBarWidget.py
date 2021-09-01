@@ -8,8 +8,7 @@ class TaskBarWidget(QtWidgets.QWidget):
         super(TaskBarWidget, self).__init__()
         self.task_bar_line_label = TaskBarContent(window)
         self.task_bar_line_label.setWordWrap(True)
-        self.task_bar_line_label.set_background_color(137, 167, 178)
-    
+
     def get_main(self) -> TaskBarContent:
         return self.task_bar_line_label
 
