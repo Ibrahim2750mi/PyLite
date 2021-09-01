@@ -28,8 +28,13 @@ class CodeEditingField(QtWidgets.QPlainTextEdit):
     @QtCore.Slot()
     def on_text_change(self):
         if len(self.previous_text) < len(self.toPlainText()):
-            if self.toPlainText()[-1] == '(':
-                pair = ')'
+            if self.toPlainText()[-1] in ('{', '[', '('):
+                if self.toPlainText()[-1] == '(':
+                    pair = ')'
+                elif self.toPlainText()[-1] == '{':
+                    pair = '}'
+                elif self.toPlainText()[-1] == '[':
+                    pair = ']'
                 self.insertPlainText(pair)
                 new_text_cursor = self.textCursor()
                 new_text_cursor.setPosition(new_text_cursor.position() - 1)
@@ -37,8 +42,8 @@ class CodeEditingField(QtWidgets.QPlainTextEdit):
 
         self.previous_text = self.toPlainText()
 
-        self.variable_button.variable_function(self.toPlainText())
         self.error_button.gen_info_function(self.toPlainText())
+        self.variable_button.variable_function(self.toPlainText())
 
     @QtCore.Slot()
     def on_cursor_change(self):

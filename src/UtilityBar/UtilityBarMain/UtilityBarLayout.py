@@ -1,6 +1,9 @@
+from .UtilityAstAnalyzer import Analyzer
+
 import ast
 import builtins
 
+import autopep8
 from PySide6 import QtWidgets
 
 
@@ -24,10 +27,8 @@ class UtilityButtons(QtWidgets.QPushButton):
         self.docker = docker
         if num == 1:
             self.clicked.connect(self.variable_function)
-            self.variables = []
-            self.all_builtins = dir(builtins) + ['lambda', 'not', 'in', 'and', 'is', 'try', 'except', 'while', 'for',
-                                                 'if',
-                                                 'elif', 'else', 'def', 'import', 'from', 'as', 'class']
+            self.analyzer = Analyzer()
+
         elif num == 2:
             self.clicked.connect(self.gen_info_function)
 
@@ -36,27 +37,42 @@ class UtilityButtons(QtWidgets.QPushButton):
 
     def variable_function(self, text):
         try:
-            st = ast.parse(text)
+            tree = ast.parse(text)
         except Exception as _:
             pass
         else:
-            self.variables = ["Variables:"]
-            for node in ast.walk(st):
-                if type(node) is ast.Name and node.id not in self.variables and node.id not in self.all_builtins:
-                    self.variables.append(node.id)
-
-        self.docker.setPlainText('\n'.join(self.variables))
+            self.analyzer = Analyzer()
+            self.analyzer.visit(tree)
+            code_data = self.analyzer.report()
+            docker_text = ""
+            try:
+                for k, vs in code_data.items():
+                    docker_text += f"{k[0].upper()+k[1:]}:\n"
+                    for v in vs:
+                        docker_text += f"{v}\n"
+                    docker_text += "\n"
+            except ValueError:
+                pass
+            else:
+                self.docker.setPlainText(docker_text)
 
     def gen_info_function(self, text):
         gen_info_text = f"General Information:\n\n"
         error_text = ""
+        fix_text = ""
         try:
             ast.parse(text)
         except Exception as e:
             if e.args != ('compile() arg 1 must be a string, bytes or AST object',):
                 error_text = f"Errors:\n{e.args[0]} at line number:" \
-                                          f"{e.args[1][1]} column number:{e.args[1][2]}"
-        self.docker.setPlainText(gen_info_text+error_text)
+                             f"{e.args[1][1]} column number:{e.args[1][2]}\n\n"
+                if e.args[0] == "unexpected EOF while parsing":
+                    if autopep8.count_unbalanced_brackets(text) > 0:
+                        fix_text = "Fix:\nTry adding a closing-parenthesis(')', ']', '}') to fix this error"
+                    else:
+                        fix_text = "Fix:\nNo fix found :("
+
+        self.docker.setPlainText(gen_info_text + error_text + fix_text)
 
     def documentation_function(self):
         pass

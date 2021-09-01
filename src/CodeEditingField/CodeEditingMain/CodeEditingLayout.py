@@ -31,6 +31,7 @@ class CodeHighlightingField(QtGui.QSyntaxHighlighter):
         with open("../assets/assets.pickle", "rb") as f:
             colors = pickle.load(f)
 
+        # --------------------------------------------
         self.string_formatting = QtGui.QTextCharFormat()
         self.string_formatting.setForeground(self.__format_color(colors["string_formatting"]))
         # --------------------------------------------
