@@ -38,7 +38,7 @@ class CodeEditingField(QtWidgets.QPlainTextEdit):
         self.previous_text = self.toPlainText()
 
         self.variable_button.variable_function(self.toPlainText())
-        self.error_button.error_function(self.toPlainText())
+        self.error_button.gen_info_function(self.toPlainText())
 
     @QtCore.Slot()
     def on_cursor_change(self):

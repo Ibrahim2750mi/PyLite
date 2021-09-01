@@ -29,8 +29,8 @@ class UtilityButtons(QtWidgets.QPushButton):
                                                  'if',
                                                  'elif', 'else', 'def', 'import', 'from', 'as', 'class']
         elif num == 2:
-            self.clicked.connect(self.error_function)
-            self.errors = []
+            self.clicked.connect(self.gen_info_function)
+
         elif num == 3:
             self.clicked.connect(self.documentation_function)
 
@@ -44,15 +44,19 @@ class UtilityButtons(QtWidgets.QPushButton):
             for node in ast.walk(st):
                 if type(node) is ast.Name and node.id not in self.variables and node.id not in self.all_builtins:
                     self.variables.append(node.id)
+
         self.docker.setPlainText('\n'.join(self.variables))
 
-    def error_function(self, text):
+    def gen_info_function(self, text):
+        gen_info_text = f"General Information:\n\n"
+        error_text = ""
         try:
             ast.parse(text)
         except Exception as e:
             if e.args != ('compile() arg 1 must be a string, bytes or AST object',):
-                self.docker.setPlainText(f"Errors:\n{e.args[0]} at line number:{e.args[1][1]}"
-                                         f" column number:{e.args[1][2]}")
+                error_text = f"Errors:\n{e.args[0]} at line number:" \
+                                          f"{e.args[1][1]} column number:{e.args[1][2]}"
+        self.docker.setPlainText(gen_info_text+error_text)
 
     def documentation_function(self):
         pass
