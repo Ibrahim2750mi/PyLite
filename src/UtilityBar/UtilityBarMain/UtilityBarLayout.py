@@ -60,7 +60,7 @@ class UtilityActions(QtGui.QAction):
                         docker_text += f"{v}\n"
                     docker_text += "\n"
             except ValueError:
-                pass
+                self.docker.setPlainText("Modules:\nVariables:")
             else:
                 self.docker.setPlainText(docker_text)
 
