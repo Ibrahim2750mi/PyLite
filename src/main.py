@@ -18,14 +18,18 @@ class Main(QtWidgets.QMainWindow):
         self.status_bar.setStyleSheet(f"background: rgb(5, 122, 188)")
         self.setStatusBar(self.status_bar)
 
-        # setting up toolbar
-        # self.tool_bar = QtWidgets.QToolBar()
-        # self.tool_bar.addWidget(self.right_docker_c.get_variable_button())
-        # self.tool_bar.addWidget(self.right_docker_c.get_error_button())
-        # self.task_bar_color = self.color_initializer(12)
-        # self.setStyleSheet("QToolBar {" + f"background-color: #{self.task_bar_color};" + "}")
-        #
-        # self.addToolBar(self.tool_bar)
+        # avoiding all pep-8 errors
+        self.menu_bar = None
+        self.file_menu = None
+        self.edit_menu = None
+        self.docker_menu = None
+        self.right_docker = None
+        self.right_docker_c = None
+        self.central_widget = None
+        self.preference_window = None
+        self.preference_menu_bar = None
+        self.preference_menu = None
+
         self.initialise_attrs()
         self.initialise_right_docker()
         self.initialise_menu_bar()
