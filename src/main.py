@@ -183,7 +183,7 @@ class Main(QtWidgets.QMainWindow):
         self.right_docker_c = UtilityBarWidget.UtilityBarWidget()
         self.central_widget = CodeEditingFieldWidget.CodeFieldWidget(self.task_bar.get_main(),
                                                                      self.right_docker_c.get_variable_button(),
-                                                                     self.right_docker_c.get_error_button())
+                                                                     self.right_docker_c.get_error_button(), self)
 
         self.setCentralWidget(self.central_widget.get_main())
 

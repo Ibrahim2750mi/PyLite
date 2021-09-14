@@ -13,9 +13,10 @@ from UtilityBar.UtilityBarMain.UtilityBarLayout import UtilityActions
 
 class CodeFieldWidget(QtWidgets.QWidget):
     def __init__(self, line_labeler: TaskBarContent, variable_button: UtilityActions,
-                 error_button: UtilityActions):
+                 error_button: UtilityActions, window: QtWidgets.QMainWindow):
         super(CodeFieldWidget, self).__init__()
-        self.code_editing_field = CodeEditingField.CodeEditingField(line_labeler, variable_button, error_button)
+        self.code_editing_field = CodeEditingField.CodeEditingField(line_labeler, variable_button, error_button,
+                                                                    window)
         self.code_editing_field.setTabStopDistance(40/3)
         self.code_editing_field.change_line_wrap()
         self.syntax_highlighter = CodeEditingLayout.CodeHighlightingField(self.code_editing_field)
