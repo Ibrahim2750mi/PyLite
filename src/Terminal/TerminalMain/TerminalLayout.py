@@ -1,11 +1,8 @@
+import re
 import subprocess
 
 from PySide6 import QtWidgets, QtGui
-import re
-import subprocess
-import sys
 
-from PySide6 import QtWidgets
 
 class str(str):
     def __init__(self, arg):
@@ -29,7 +26,6 @@ class str(str):
         return self.__sub__(other)
 
 
-
 class Terminal(QtWidgets.QTextEdit):
     def __init__(self, path):
         super(Terminal, self).__init__()
@@ -47,7 +43,6 @@ class Terminal(QtWidgets.QTextEdit):
 
             self.cmds.append(self.current_text)
             self.current_text = ""
-
 
         elif e.key() == 16777219:
             # backspace
@@ -72,7 +67,6 @@ class Terminal(QtWidgets.QTextEdit):
             else:
                 self.current_text = self.cmds[-1]
                 self.__auto_cursor()
-                
 
         else:
             self.setPlainText(self.toPlainText()+e.text())
@@ -84,9 +78,7 @@ class Terminal(QtWidgets.QTextEdit):
     def initialise_new_line(self) -> None:
 
         self.setPlainText(f"{self.path}$")
-        k = self.textCursor()
-        k.setPosition(len(self.path)+1, QtGui.QTextCursor.MoveAnchor)
-        self.setTextCursor(k)
+        self.__auto_cursor()
 
     def __auto_cursor(self, pt=None) -> None:
         if not pt:

@@ -5,6 +5,7 @@ from UtilityBar import UtilityBarWidget
 
 import pickle
 import os
+import subprocess as sp
 
 from PySide6 import QtWidgets, QtCore, QtGui
 
@@ -18,17 +19,25 @@ class Main(QtWidgets.QMainWindow):
         self.status_bar.setStyleSheet(f"background: rgb(5, 122, 188)")
         self.setStatusBar(self.status_bar)
 
+        # path of the current file
+        self.path = None
+
         # avoiding all pep-8 errors
         self.menu_bar = None
         self.file_menu = None
         self.edit_menu = None
         self.docker_menu = None
+        self.build_menu = None
+
         self.right_docker = None
         self.right_docker_c = None
         self.central_widget = None
         self.preference_window = None
         self.preference_menu_bar = None
         self.preference_menu = None
+
+        # main_field text
+        self.text = ""
 
         self.initialise_attrs()
         self.initialise_right_docker()
@@ -44,6 +53,11 @@ class Main(QtWidgets.QMainWindow):
         dlg.setText(s)
         dlg.setIcon(QtWidgets.QMessageBox.Critical)
         dlg.show()
+
+    def run(self):
+        self.file_save()
+        output = sp.run(["python3", self.path], capture_output=True)
+        print(output.stdout.decode())
 
     def file_open(self):
         path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Open file", "",
@@ -67,13 +81,16 @@ class Main(QtWidgets.QMainWindow):
     def file_saveas(self):
         path, _ = QtWidgets.QFileDialog.getSaveFileName(self, "Save file", "",
                                                         "All files (*.*)")
+        print(path, "initial_path")
         if not path:
             return
+        print(path, "still in front")
         self.__save_to_path(path)
 
     def __save_to_path(self, path):
         text = self.central_widget.get_main().toPlainText()
         try:
+            print(path, "path reference")
             with open(path, 'w') as f:
                 f.write(text)
         except Exception as e:
@@ -87,13 +104,14 @@ class Main(QtWidgets.QMainWindow):
                                              if self.path else "Untitled"))
 
     def on_preference_window(self):
+        self.text = self.central_widget.code_editing_field.toPlainText()
         self.centralWidget().hide()
         self.menuBar().hide()
         self.removeDockWidget(self.right_docker)
         self.statusBar().hide()
 
-        self.load_colors()
         self.initialise_preference_window()
+        self.load_colors()
         self.setCentralWidget(self.preference_window)
         self.setMenuBar(self.preference_menu_bar)
 
@@ -105,6 +123,7 @@ class Main(QtWidgets.QMainWindow):
         self.menuBar().hide()
 
         self.initialise_attrs()
+        self.central_widget.code_editing_field.setPlainText(self.text)
         self.initialise_menu_bar()
         self.initialise_right_docker()
         self.addDockWidget(QtCore.Qt.RightDockWidgetArea, self.right_docker)
@@ -147,18 +166,22 @@ class Main(QtWidgets.QMainWindow):
 
         # setting up File Menu
         self.file_menu = self.menu_bar.addMenu("&File")
+
         open_file_action = QtGui.QAction("Open file", self)
         open_file_action.setStatusTip("Open file")
+        open_file_action.setShortcut(QtGui.QKeySequence.Open)
         open_file_action.triggered.connect(self.file_open)
         self.file_menu.addAction(open_file_action)
 
         save_file_action = QtGui.QAction("Save", self)
         save_file_action.setStatusTip("Save current page")
+        save_file_action.setShortcut(QtGui.QKeySequence.Save)
         save_file_action.triggered.connect(self.file_save)
         self.file_menu.addAction(save_file_action)
 
         saveas_file_action = QtGui.QAction("Save As", self)
         saveas_file_action.setStatusTip("Save current page to specified file")
+        saveas_file_action.setShortcut(QtGui.QKeySequence.SaveAs)
         saveas_file_action.triggered.connect(self.file_saveas)
         self.file_menu.addAction(saveas_file_action)
 
@@ -173,6 +196,14 @@ class Main(QtWidgets.QMainWindow):
         self.docker_menu = self.menu_bar.addMenu("&Docker&Utils")
         self.docker_menu.addAction(self.right_docker_c.get_variable_button())
         self.docker_menu.addAction(self.right_docker_c.get_error_button())
+
+        # setting up Build menu
+        self.build_menu = self.menu_bar.addMenu("&Build")
+
+        run_action = QtGui.QAction("Run", self)
+        run_action.setStatusTip("Runs the code")
+        run_action.triggered.connect(self.run)
+        self.build_menu.addAction(run_action)
 
     def initialise_right_docker(self):
         self.right_docker = QtWidgets.QDockWidget()
