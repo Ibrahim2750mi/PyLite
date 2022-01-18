@@ -88,16 +88,13 @@ class Main(QtWidgets.QMainWindow):
     def file_saveas(self):
         path, _ = QtWidgets.QFileDialog.getSaveFileName(self, "Save file", "",
                                                         "All files (*.*)")
-        print(path, "initial_path")
         if not path:
             return
-        print(path, "still in front")
         self.__save_to_path(path)
 
     def __save_to_path(self, path):
         text = self.central_widget.get_main().toPlainText()
         try:
-            print(path, "path reference")
             with open(path, 'w') as f:
                 f.write(text)
         except Exception as e:
