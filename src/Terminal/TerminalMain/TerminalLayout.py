@@ -1,4 +1,5 @@
 import re
+import shlex
 import subprocess
 
 from PySide6 import QtWidgets, QtGui
@@ -37,7 +38,19 @@ class Terminal(QtWidgets.QTextEdit):
     def keyPressEvent(self, e: QtGui.QKeyEvent) -> None:
         if e.key() == 16777220:
             # enter
-            output = subprocess.run(self.current_text.split(' '), capture_output=True)
+            cmd = shlex.split(self.current_text)
+            try:
+                output = subprocess.run(cmd, stdout=subprocess.PIPE,
+                                        stderr=subprocess.STDOUT)
+            except FileNotFoundError:
+                print(cmd)
+                if "source" in cmd:
+                    try:
+                        cmd[cmd.index("source") + 1] = "source " + cmd[cmd.index("source") + 1]
+                        _ = cmd.pop(cmd.index("source"))
+                    except IndexError:
+                        pass
+                output = subprocess.run(['bash', '-c'] + cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
             self.setPlainText(self.toPlainText()+"\n" + output.stdout.decode() + "\n" + self.path+"$")
             self.__auto_cursor()
 
@@ -86,3 +99,12 @@ class Terminal(QtWidgets.QTextEdit):
         cur = self.textCursor()
         cur.setPosition(pt)
         self.setTextCursor(cur)
+
+
+if __name__ == "__main__":
+    app = QtWidgets.QApplication([])
+
+    app.setApplicationName("PyLite")
+    k = Terminal('~/PycharmProjects/PyLite/src/Terminal/TerminalMain')
+    k.show()
+    app.exec()
