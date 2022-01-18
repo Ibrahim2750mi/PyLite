@@ -21,6 +21,7 @@ class Main(QtWidgets.QMainWindow):
 
         # path of the current file
         self.path = None
+        self.interpreter = "python3"
 
         # avoiding all pep-8 errors
         self.menu_bar = None
@@ -56,8 +57,14 @@ class Main(QtWidgets.QMainWindow):
 
     def run(self):
         self.file_save()
-        output = sp.run(["python3", self.path], capture_output=True)
+        output = sp.run([self.interpreter, self.path], capture_output=True)
         print(output.stdout.decode())
+
+    def change_interpreter(self):
+        self.interpreter, _ = QtWidgets.QInputDialog.getText(self,
+                                                             "Change Python Interpreter",
+                                                             "Enter the path of the python interpreter",
+                                                             echo=QtWidgets.QLineEdit.Normal)
 
     def file_open(self):
         path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Open file", "",
@@ -205,6 +212,11 @@ class Main(QtWidgets.QMainWindow):
         run_action.triggered.connect(self.run)
         self.build_menu.addAction(run_action)
 
+        set_interpreter = QtGui.QAction("Set python interpreter", self)
+        set_interpreter.setStatusTip("Changes the python interpreter")
+        set_interpreter.triggered.connect(self.change_interpreter)
+        self.build_menu.addAction(set_interpreter)
+
     def initialise_right_docker(self):
         self.right_docker = QtWidgets.QDockWidget()
         self.right_docker.setWidget(self.right_docker_c.get_docker())
@@ -225,7 +237,6 @@ class Main(QtWidgets.QMainWindow):
         preference_go_back = QtGui.QAction("Back", self)
         preference_go_back.triggered.connect(self.on_main_window)
         self.preference_menu.addAction(preference_go_back)
-
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication([])
