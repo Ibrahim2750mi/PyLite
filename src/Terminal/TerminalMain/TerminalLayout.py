@@ -34,13 +34,13 @@ class Terminal(QtWidgets.QTextEdit):
         self.path = path
         self.initialise_new_line()
         self.cmds = []
-    
+
     def keyPressEvent(self, e: QtGui.QKeyEvent) -> None:
         if e.key() == 16777220:
             # enter
             cmd = shlex.split(self.current_text)
             try:
-                output = subprocess.run(cmd, stdout=subprocess.PIPE,
+                proc = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                                         stderr=subprocess.STDOUT)
             except FileNotFoundError:
                 print(cmd)
@@ -50,9 +50,12 @@ class Terminal(QtWidgets.QTextEdit):
                         _ = cmd.pop(cmd.index("source"))
                     except IndexError:
                         pass
-                output = subprocess.run(['bash', '-c'] + cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-            self.setPlainText(self.toPlainText()+"\n" + output.stdout.decode() + "\n" + self.path+"$")
-            self.__auto_cursor()
+                proc = subprocess.Popen(['bash', '-c'] + cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                                        stdin=subprocess.PIPE)
+            output = proc.communicate(input=b'6223')[0]
+            output = output.decode()
+            self.setPlainText(self.toPlainText() + "\n" + output + "\n" + self.path + "$")
+            self._auto_cursor()
 
             self.cmds.append(self.current_text)
             self.current_text = ""
@@ -63,7 +66,7 @@ class Terminal(QtWidgets.QTextEdit):
             if self.toPlainText()[-1] in [x for x in re.findall(deletable_text_regex, self.toPlainText()) if x]:
                 self.setPlainText(self.toPlainText()[0:-1])
 
-                self.__auto_cursor()
+                self._auto_cursor()
 
                 self.current_text = self.current_text[0:-1]
 
@@ -79,10 +82,10 @@ class Terminal(QtWidgets.QTextEdit):
                 pass
             else:
                 self.current_text = self.cmds[-1]
-                self.__auto_cursor()
+                self._auto_cursor()
 
         else:
-            self.setPlainText(self.toPlainText()+e.text())
+            self.setPlainText(self.toPlainText() + e.text())
             self.current_text += e.text()
             k = self.textCursor()
             k.setPosition(len(self.toPlainText()), QtGui.QTextCursor.MoveAnchor)
@@ -91,9 +94,9 @@ class Terminal(QtWidgets.QTextEdit):
     def initialise_new_line(self) -> None:
 
         self.setPlainText(f"{self.path}$")
-        self.__auto_cursor()
+        self._auto_cursor()
 
-    def __auto_cursor(self, pt=None) -> None:
+    def _auto_cursor(self, pt=None) -> None:
         if not pt:
             pt = len(self.toPlainText())
         cur = self.textCursor()
