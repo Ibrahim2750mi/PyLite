@@ -51,12 +51,13 @@ class Terminal(QtWidgets.QTextEdit):
                     except IndexError:
                         pass
                 proc = subprocess.Popen(['bash', '-c'] + cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                                        stdin=subprocess.PIPE)
-            output = proc.communicate(input=b'6223')[0]
-            output = output.decode()
-            self.setPlainText(self.toPlainText() + "\n" + output + "\n" + self.path + "$")
+                                        stdin=subprocess.PIPE, universal_newlines=True)
+            self.setPlainText(self.toPlainText() + "\n")
+            for line in proc.stdout:
+                self.setPlainText(self.toPlainText() + line.decode())
+                self._auto_cursor()
+            self.setPlainText(self.toPlainText() + self.path + "$")
             self._auto_cursor()
-
             self.cmds.append(self.current_text)
             self.current_text = ""
 
