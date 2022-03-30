@@ -1,14 +1,8 @@
-import os
-import sys
-
 from PySide6 import QtWidgets, QtGui
 
-from .CodeEditingMain import CodeEditingField, CodeEditingLayout
-
-sys.path.append(os.path.realpath('.'))
-
-from TaskBar.TaskBarMain.TaskBarLayout import TaskBarContent
-from UtilityBar.UtilityBarMain.UtilityBarLayout import UtilityActions
+from CodeEditingField.CodeEditingMain import CodeEditingField, CodeEditingLayout
+from TaskBar import TaskBarContent
+from UtilityBar import UtilityActions
 
 
 class CodeFieldWidget(QtWidgets.QWidget):

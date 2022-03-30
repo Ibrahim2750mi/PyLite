@@ -1,4 +1,4 @@
-from CodeEditingField import CodeEditingFieldWidget
+from CodeEditingField import CodeFieldWidget
 from Preferences import PreferenceWidget
 from TaskBar import TaskBarWidget
 from Terminal import TerminalWidget
@@ -14,7 +14,7 @@ from PySide6 import QtWidgets, QtCore, QtGui
 class Main(QtWidgets.QMainWindow):
     def __init__(self):
         super(Main, self).__init__()
-        self.task_bar = TaskBarWidget.TaskBarWidget(self)
+        self.task_bar = TaskBarWidget(self)
         # setting up status bar
         self.status_bar = QtWidgets.QStatusBar(self.task_bar.get_main())
         self.status_bar.setStyleSheet(f"background: rgb(5, 122, 188)")
@@ -236,17 +236,17 @@ class Main(QtWidgets.QMainWindow):
         self.addDockWidget(QtCore.Qt.BottomDockWidgetArea, self.bottom_docker)
 
     def initialise_attrs(self):
-        self.right_docker_c = UtilityBarWidget.UtilityBarWidget()
+        self.right_docker_c = UtilityBarWidget()
         self.bottom_docker_c = TerminalWidget(self.path)
 
-        self.central_widget = CodeEditingFieldWidget.CodeFieldWidget(self.task_bar.get_main(),
+        self.central_widget = CodeFieldWidget(self.task_bar.get_main(),
                                                                      self.right_docker_c.get_variable_button(),
                                                                      self.right_docker_c.get_error_button(), self)
 
         self.setCentralWidget(self.central_widget.get_main())
 
     def initialise_preference_window(self):
-        self.preference_window = PreferenceWidget.PreferenceWidget()
+        self.preference_window = PreferenceWidget()
         self.preference_menu_bar = QtWidgets.QMenuBar()
         self.preference_menu = self.preference_menu_bar.addMenu("&Go Back")
         preference_go_back = QtGui.QAction("Back", self)

@@ -4,10 +4,8 @@ import sys
 
 from PySide6 import QtWidgets, QtCore
 
-sys.path.append(os.path.realpath('.'))
-
-from TaskBar.TaskBarMain.TaskBarLayout import TaskBarContent
-from UtilityBar.UtilityBarMain.UtilityBarLayout import UtilityActions
+from TaskBar import TaskBarContent
+from UtilityBar import UtilityActions
 
 
 class CodeEditingField(QtWidgets.QPlainTextEdit):

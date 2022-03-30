@@ -1,1 +1,2 @@
-
+from TaskBar.TaskBarMain.TaskBarLayout import TaskBarContent
+from TaskBar.TaskBarWidget import TaskBarWidget

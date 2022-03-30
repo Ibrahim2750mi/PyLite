@@ -1,4 +1,4 @@
-from .PreferenceMain.PreferenceLayout import PreferenceLayout
+from Preferences.PreferenceMain.PreferenceLayout import PreferenceLayout
 
 import pickle
 

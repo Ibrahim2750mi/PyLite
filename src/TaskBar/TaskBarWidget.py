@@ -1,4 +1,4 @@
-from TaskBar.TaskBarMain.TaskBarLayout import TaskBarContent
+from TaskBar import TaskBarContent
 
 from PySide6 import QtWidgets, QtGui
 
