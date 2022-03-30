@@ -41,7 +41,7 @@ class Terminal(QtWidgets.QTextEdit):
             cmd = shlex.split(self.current_text)
             try:
                 proc = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-                                        stderr=subprocess.STDOUT)
+                                        stderr=subprocess.STDOUT, universal_newlines=True, bufsize=1)
             except FileNotFoundError:
                 print(cmd)
                 if "source" in cmd:
@@ -51,10 +51,10 @@ class Terminal(QtWidgets.QTextEdit):
                     except IndexError:
                         pass
                 proc = subprocess.Popen(['bash', '-c'] + cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                                        stdin=subprocess.PIPE, universal_newlines=True)
+                                        stdin=subprocess.PIPE, universal_newlines=True, bufsize=1)
             self.setPlainText(self.toPlainText() + "\n")
-            for line in proc.stdout:
-                self.setPlainText(self.toPlainText() + line.decode())
+            for line in proc.stdout.readlines():
+                self.setPlainText(self.toPlainText() + line)
                 self._auto_cursor()
             self.setPlainText(self.toPlainText() + self.path + "$")
             self._auto_cursor()
@@ -103,6 +103,11 @@ class Terminal(QtWidgets.QTextEdit):
         cur = self.textCursor()
         cur.setPosition(pt)
         self.setTextCursor(cur)
+
+    def change_path(self, path):
+        self.path = path
+        self.setPlainText(self.toPlainText() + "\n")
+        self.setPlainText(self.toPlainText() + self.path + "$")
 
 
 if __name__ == "__main__":

@@ -1,6 +1,7 @@
 from CodeEditingField import CodeEditingFieldWidget
 from Preferences import PreferenceWidget
 from TaskBar import TaskBarWidget
+from Terminal import TerminalWidget
 from UtilityBar import UtilityBarWidget
 
 import pickle
@@ -32,6 +33,9 @@ class Main(QtWidgets.QMainWindow):
 
         self.right_docker = None
         self.right_docker_c = None
+        self.bottom_docker = None
+        self.bottom_docker_c = None
+
         self.central_widget = None
         self.preference_window = None
         self.preference_menu_bar = None
@@ -42,6 +46,7 @@ class Main(QtWidgets.QMainWindow):
 
         self.initialise_attrs()
         self.initialise_right_docker()
+        self.initialise_bottom_docker()
         self.initialise_menu_bar()
         self.initialise_preference_window()
         self.setMenuBar(self.menu_bar)
@@ -77,6 +82,7 @@ class Main(QtWidgets.QMainWindow):
                 self.dialog_critical(str(e))
             else:
                 self.path = path
+                self.bottom_docker_c.docker.change_path(self.path)
                 self.central_widget.get_main().setPlainText(text)
                 self.update_title()
 
@@ -112,6 +118,7 @@ class Main(QtWidgets.QMainWindow):
         self.centralWidget().hide()
         self.menuBar().hide()
         self.removeDockWidget(self.right_docker)
+        self.removeDockWidget(self.bottom_docker)
         self.statusBar().hide()
 
         self.initialise_preference_window()
@@ -130,12 +137,13 @@ class Main(QtWidgets.QMainWindow):
         self.central_widget.code_editing_field.setPlainText(self.text)
         self.initialise_menu_bar()
         self.initialise_right_docker()
-        self.addDockWidget(QtCore.Qt.RightDockWidgetArea, self.right_docker)
+        self.initialise_bottom_docker()
         self.setMenuBar(self.menu_bar)
 
         self.load_colors()
         self.central_widget.get_main().load_color()
         self.right_docker_c.get_docker().load_color()
+        self.bottom_docker_c.load_color()
 
         self.menuBar().show()
         self.centralWidget().show()
@@ -149,7 +157,9 @@ class Main(QtWidgets.QMainWindow):
         bg_rgb = list(int(bg[i:i + 2], 16) for i in (0, 2, 4))
 
         right_docker_color = self.color_initializer(16, bg_rgb)
+
         self.right_docker.setStyleSheet("QDockWidget:title {" + f"background: #{right_docker_color};" + "}")
+        self.bottom_docker.setStyleSheet("QDockWidget:tile {" + f"background: #{right_docker_color};" + "}")
         menu_bar_color = self.color_initializer(16, bg_rgb)
         self.menu_bar.setStyleSheet("QMenuBar {" + f"color: #{fg}; background-color: #{menu_bar_color};" + "}")
         self.preference_menu_bar.setStyleSheet("QMenuBar {" + f"color: #{fg}; "
@@ -219,8 +229,16 @@ class Main(QtWidgets.QMainWindow):
         self.right_docker.setWidget(self.right_docker_c.get_docker())
         self.addDockWidget(QtCore.Qt.RightDockWidgetArea, self.right_docker)
 
+    def initialise_bottom_docker(self):
+        self.bottom_docker = QtWidgets.QDockWidget()
+        self.bottom_docker.setWidget(self.bottom_docker_c.docker)
+        self.bottom_docker_c.load_color()
+        self.addDockWidget(QtCore.Qt.BottomDockWidgetArea, self.bottom_docker)
+
     def initialise_attrs(self):
         self.right_docker_c = UtilityBarWidget.UtilityBarWidget()
+        self.bottom_docker_c = TerminalWidget(self.path)
+
         self.central_widget = CodeEditingFieldWidget.CodeFieldWidget(self.task_bar.get_main(),
                                                                      self.right_docker_c.get_variable_button(),
                                                                      self.right_docker_c.get_error_button(), self)
@@ -234,6 +252,7 @@ class Main(QtWidgets.QMainWindow):
         preference_go_back = QtGui.QAction("Back", self)
         preference_go_back.triggered.connect(self.on_main_window)
         self.preference_menu.addAction(preference_go_back)
+
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication([])
