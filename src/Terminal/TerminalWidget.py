@@ -22,4 +22,3 @@ class TerminalWidget(QtWidgets.QWidget):
             bg = colors["background"]
             fg = colors["foreground"]
         self._docker.setStyleSheet("QTextEdit {" + f"color: #{fg};background-color: #{bg};" + "}")
-

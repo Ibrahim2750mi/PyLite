@@ -240,8 +240,8 @@ class Main(QtWidgets.QMainWindow):
         self.bottom_docker_c = TerminalWidget(self.path)
 
         self.central_widget = CodeFieldWidget(self.task_bar.get_main(),
-                                                                     self.right_docker_c.get_variable_button(),
-                                                                     self.right_docker_c.get_error_button(), self)
+                                              self.right_docker_c.get_variable_button(),
+                                              self.right_docker_c.get_error_button(), self)
 
         self.setCentralWidget(self.central_widget.get_main())
 
