@@ -1,4 +1,6 @@
+import functools
 import re
+import pathlib
 import shlex
 import subprocess
 
@@ -34,14 +36,16 @@ class Terminal(QtWidgets.QTextEdit):
         self.path = path
         self.initialise_new_line()
         self.cmds = []
+        self.path_history = [path]
 
     def keyPressEvent(self, e: QtGui.QKeyEvent) -> None:
         if e.key() == 16777220:
             # enter
             cmd = shlex.split(self.current_text)
+            popen = functools.partial(subprocess.Popen, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                                      stderr=subprocess.STDOUT, universal_newlines=True, bufsize=1)
             try:
-                proc = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-                                        stderr=subprocess.STDOUT, universal_newlines=True, bufsize=1)
+                proc = popen(cmd, cwd=self.path)
             except FileNotFoundError:
                 print(cmd)
                 if "source" in cmd:
@@ -50,21 +54,40 @@ class Terminal(QtWidgets.QTextEdit):
                         _ = cmd.pop(cmd.index("source"))
                     except IndexError:
                         pass
-                proc = subprocess.Popen(['bash', '-c'] + cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                                        stdin=subprocess.PIPE, universal_newlines=True, bufsize=1)
+                proc = popen(['bash', '-c'] + cmd, cwd=self.path)
+
             self.setPlainText(self.toPlainText() + "\n")
             for line in proc.stdout.readlines():
                 self.setPlainText(self.toPlainText() + line)
                 self._auto_cursor()
-            self.setPlainText(self.toPlainText() + self.path + "$")
-            self._auto_cursor()
+
+            if cmd[0] == "cd":
+                if pathlib.Path(cmd[-1]).exists():
+                    self.change_path(cmd[-1])
+                    self.path_history.append(self.path)
+                else:
+                    if pathlib.Path(self.path + cmd[-1]).exists():
+                        self.change_path(self.path + cmd[-1])
+                        self.path_history.append(self.path)
+                    else:
+                        self.setPlainText(self.toPlainText() + "No such file or directory\n")
+                        self.setPlainText(self.toPlainText() + self.path + "$")
+                        self._auto_cursor()
+            else:
+                self.setPlainText(self.toPlainText() + self.path + "$")
+                self._auto_cursor()
             self.cmds.append(self.current_text)
             self.current_text = ""
 
         elif e.key() == 16777219:
             # backspace
-            deletable_text_regex = self.path + r"\$|.*?"
-            if self.toPlainText()[-1] in [x for x in re.findall(deletable_text_regex, self.toPlainText()) if x]:
+            deletable_text_regex = ""
+
+            for path in self.path_history:
+                deletable_text_regex += "(" + path + r"\$|.*?)|"
+            deletable_text_regex += "(.*?)"
+
+            if self.toPlainText()[-1] in [x[0] for x in re.findall(deletable_text_regex, self.toPlainText()) if x[0]]:
                 self.setPlainText(self.toPlainText()[0:-1])
 
                 self._auto_cursor()
@@ -88,9 +111,9 @@ class Terminal(QtWidgets.QTextEdit):
         else:
             self.setPlainText(self.toPlainText() + e.text())
             self.current_text += e.text()
-            k = self.textCursor()
-            k.setPosition(len(self.toPlainText()), QtGui.QTextCursor.MoveAnchor)
-            self.setTextCursor(k)
+            temp_text_cursor = self.textCursor()
+            temp_text_cursor.setPosition(len(self.toPlainText()), QtGui.QTextCursor.MoveAnchor)
+            self.setTextCursor(temp_text_cursor)
 
     def initialise_new_line(self) -> None:
 
@@ -104,16 +127,19 @@ class Terminal(QtWidgets.QTextEdit):
         cur.setPosition(pt)
         self.setTextCursor(cur)
 
-    def change_path(self, path):
+    def change_path(self, path: str):
         self.path = path
+        if not self.path.endswith("/"):
+            self.path += "/"
         self.setPlainText(self.toPlainText() + "\n")
         self.setPlainText(self.toPlainText() + self.path + "$")
+        self._auto_cursor()
 
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication([])
 
     app.setApplicationName("PyLite")
-    k = Terminal('~/PycharmProjects/PyLite/src/Terminal/TerminalMain')
+    k = Terminal('/home/ibrahim/')
     k.show()
     app.exec()
