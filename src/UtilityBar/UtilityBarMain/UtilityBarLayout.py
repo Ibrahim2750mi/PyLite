@@ -53,7 +53,6 @@ class UtilityActions(QtGui.QAction):
         code_data = self.analyzer.report()
         docker_text = ""
         try:
-            print(code_data)
             for headings, values in code_data.items():
                 docker_text += f"{headings[0].upper()+headings[1:]}:\n"
                 for value in values:
