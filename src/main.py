@@ -1,14 +1,15 @@
-from CodeEditingField import CodeFieldWidget
-from Preferences import PreferenceWidget
-from TaskBar import TaskBarWidget
-from Terminal import TerminalWidget
-from UtilityBar import UtilityBarWidget
-
+import functools
 import pickle
 import os
 import subprocess as sp
 
 from PySide6 import QtWidgets, QtCore, QtGui
+
+from CodeEditingField import CodeFieldWidget
+from Preferences import PreferenceWidget
+from TaskBar import TaskBarWidget
+from Terminal import TerminalWidget
+from UtilityBar import UtilityBarWidget
 
 
 class Main(QtWidgets.QMainWindow):
@@ -54,6 +55,9 @@ class Main(QtWidgets.QMainWindow):
         self.path = None
         self.show()
 
+        # settings
+        self.no_auto_open = False
+
     def dialog_critical(self, s):
         dlg = QtWidgets.QMessageBox(self)
         dlg.setText(s)
@@ -82,12 +86,14 @@ class Main(QtWidgets.QMainWindow):
                 self.dialog_critical(str(e))
             else:
                 self.path = path
-                self.bottom_docker_c.docker.change_path(self.path)
+                self.bottom_docker_c.docker.change_path('/'.join(path.split("/")[0:-1]))
                 self.central_widget.get_main().setPlainText(text)
                 self.update_title()
 
-    def file_save(self):
-        if self.path is None:
+    def file_save(self, sudo=False):
+        if not self.path and (not self.no_auto_open or sudo):
+            if not self.path:
+                self.no_auto_open = True
             return self.file_saveas()
         self.__save_to_path(self.path)
 
@@ -100,14 +106,16 @@ class Main(QtWidgets.QMainWindow):
 
     def __save_to_path(self, path):
         text = self.central_widget.get_main().toPlainText()
+        if not path:
+            return
         try:
             with open(path, 'w') as f:
                 f.write(text)
         except Exception as e:
             self.dialog_critical(str(e))
-        else:
-            self.path = path
-            self.update_title()
+            return
+        self.path = path
+        self.update_title()
 
     def update_title(self):
         self.setWindowTitle("%s - PyLite" % (os.path.basename(self.path)
@@ -190,7 +198,8 @@ class Main(QtWidgets.QMainWindow):
         save_file_action = QtGui.QAction("Save", self)
         save_file_action.setStatusTip("Save current page")
         save_file_action.setShortcut(QtGui.QKeySequence.Save)
-        save_file_action.triggered.connect(self.file_save)
+        sudo_save_file = functools.partial(self.file_save, sudo=True)
+        save_file_action.triggered.connect(sudo_save_file)
         self.file_menu.addAction(save_file_action)
 
         saveas_file_action = QtGui.QAction("Save As", self)
@@ -232,6 +241,7 @@ class Main(QtWidgets.QMainWindow):
     def initialise_bottom_docker(self):
         self.bottom_docker = QtWidgets.QDockWidget()
         self.bottom_docker.setWidget(self.bottom_docker_c.docker)
+        self.bottom_docker.setStyleSheet("QDockWidget {border-width: 20px;border-color: #101010}")
         self.bottom_docker_c.load_color()
         self.addDockWidget(QtCore.Qt.BottomDockWidgetArea, self.bottom_docker)
 

@@ -21,7 +21,8 @@ class CodeHighlightingField(QtGui.QSyntaxHighlighter):
         python_builtins_others = list(filter(lambda builtin: 'Error' not in builtin and
                                                              builtin.lower() != builtin, all_builtins))
         python_builtins_others += ['lambda', 'not', 'in', 'and', 'is', 'try', 'except', 'while', 'for', 'if',
-                                   'elif', 'else', 'def', 'import', 'from', 'as', 'class']
+                                   'elif', 'else', 'def', 'import', 'from', 'as', 'class', "pass", "async", "raise",
+                                   "return", "assert"]
         python_builtins_errors = list(filter(lambda builtin: 'Error' in builtin, all_builtins))
         self.time_in_sec = 0
         self.python_builtins_errors_regex = regex_converter(python_builtins_errors)

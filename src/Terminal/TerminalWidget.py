@@ -1,7 +1,6 @@
 from pathlib import Path
 import pickle
 
-
 from PySide6 import QtWidgets
 
 from Terminal import Terminal

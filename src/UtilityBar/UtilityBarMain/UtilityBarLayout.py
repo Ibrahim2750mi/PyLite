@@ -47,22 +47,22 @@ class UtilityActions(QtGui.QAction):
         try:
             tree = ast.parse(text)
         except Exception as _:
-            pass
-        else:
-            self.analyzer = Analyzer()
-            self.analyzer.visit(tree)
-            code_data = self.analyzer.report()
-            docker_text = ""
-            try:
-                for k, vs in code_data.items():
-                    docker_text += f"{k[0].upper()+k[1:]}:\n"
-                    for v in vs:
-                        docker_text += f"{v}\n"
-                    docker_text += "\n"
-            except ValueError:
-                self.docker.setPlainText("Modules:\nVariables:")
-            else:
-                self.docker.setPlainText(docker_text)
+            return
+        self.analyzer = Analyzer()
+        self.analyzer.visit(tree)
+        code_data = self.analyzer.report()
+        docker_text = ""
+        try:
+            print(code_data)
+            for headings, values in code_data.items():
+                docker_text += f"{headings[0].upper()+headings[1:]}:\n"
+                for value in values:
+                    docker_text += f"{value}\n"
+                docker_text += "\n"
+        except ValueError:
+            self.docker.setPlainText("Modules:\nVariables:")
+            return
+        self.docker.setPlainText(docker_text)
 
     def gen_info_function(self, text):
         gen_info_text = f"General Information:\n\n"
